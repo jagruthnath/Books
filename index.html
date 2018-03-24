@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Problem Solving Books</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+ </head>
+ <script type="text/javascript">
+	var bookList=new Array();
+	var midArray=new Array();
+	var bookNumber;
+	var numberOfBooks;
+
+	var request = new XMLHttpRequest();
+	request.open("GET", "problem-solving-books.json", true);
+	request.send(null);
+	request.onreadystatechange = function() {
+	if ( request.readyState === 4 && request.status === 200 ) {
+	var	data = JSON.parse(request.responseText);	
+
+	
+
+	//Store JSON to Array
+	for(i=0; i<data.items.length; i++){
+      bookList[i]=new Array;
+      bookList[i][0] = data.items[i].volumeInfo.title;
+      bookList[i][1] = data.items[i].volumeInfo.description;
+	  bookList[i][2] = data.items[i].volumeInfo.imageLinks.smallThumbnail;
+      bookList[i][3] = data.items[i].volumeInfo.previewLink;
+      bookList[i][4] = data.items[i].volumeInfo.publisher;
+	  bookList[i][5] = data.items[i].volumeInfo.publishedDate.substr(0,4);
+	  bookList[i][6] = new Array;
+	  for(var j=0;j<data.items[i].volumeInfo.authors.length;j++)
+		bookList[i][6][j] = data.items[i].volumeInfo.authors[j];
+	  bookList[i][7] = data.items[i].saleInfo.amount;
+      }
+
+	//Store JSON to Array
+      numberOfBooks = bookList.length;
+	}
+}
+function displayBook(){
+	mid = "b"+bookNumber;
+	midArray[bookNumber] = mid;
+	var main=document.getElementById("books");
+    main.innerHTML+='<div id='+mid+' style="display:none"><div class="col-md-5 float-left"><div class=row><div id="image" class=col-md-5><img src="'+bookList[bookNumber][2]+'"></div><div class=col-md-7><div id="author" class=row>'+bookList[bookNumber][6][0]+'</div><div id="price" class=row>'+bookList[bookNumber][7]+'</div><div id="publisher" class=row>'+bookList[bookNumber][4]+'</div><div id="year" class=row>'+bookList[bookNumber][5]+'</div></div></div><div class=row>Web Page Developed by:Student Name<br>Email:placeholder@email.com.</div></div><div class=col-md-12><div id="title" class=row><h1>'+bookList[bookNumber][0]+'</h1></div><div id="desc" class=row>'+bookList[bookNumber][1]+'</div><div id="link" class="row float-right"><a href="'+bookList[bookNumber][3]+'">Preview Link</a></div></div><div class=row><a href="#" id="left" onclick="goLeft();"><h1 style=""><</h1></a><a href="#" id="right" onclick="goRight();"style="margin-left:25%"><h1>></h1></a></div></div>';
+	document.getElementById('b0').style.display="block";
+}
+
+function displayBooks(){
+	for(bookNumber=0;bookNumber<numberOfBooks;bookNumber++)
+	  displayBook();
+	initArrow();
+}
+
+function initArrow()
+{
+	if(document.getElementById('b0').style.display == "block")
+		document.getElementById('left').style.display = "none";
+	else
+		document.getElementById('left').style.display = "block";
+
+	if(document.getElementById('b'+(numberOfBooks-1)).style.display == "block")
+		document.getElementById('right').style.display = "none";
+	else
+		document.getElementById('right').style.display = "block";
+}
+
+function goLeft()
+{
+	var y;
+	for(var x = 0;x<numberOfBooks;x++)
+	{
+		if(document.getElementById(midArray[x]).style.display == "block")
+			y=x;
+		document.getElementById(midArray[x]).style.display = "none";
+	}
+	if(y!=0)
+	{
+		y--;
+		document.getElementById(midArray[y]).style.display = "block";
+		initArrow();
+	}
+};
+
+function goRight()
+{
+	var y;
+	for(var x = 0;x<numberOfBooks;x++)
+	{
+		if(document.getElementById(midArray[x]).style.display == "block")
+			y=x;
+		document.getElementById(midArray[x]).style.display = "none";
+	}
+	if(y!=bookNumber)
+	{
+		y++;
+		document.getElementById(midArray[y]).style.display = "block";
+		initArrow();
+	}
+}
+</script>
+ <body onload="displayBooks();">
+  <div class="container">
+	<div id="books"></div>
+  </div>
+ </body>
+</html>
